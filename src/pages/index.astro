@@ -1,8 +1,10 @@
 ---
 import '../styles/global.css';
 import { site } from '../data/site';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import BrandAssets from '../components/BrandAssets.astro';
 
-const year = new Date().getFullYear();
 const contactHref = 'mailto:' + site.contactEmail + '?subject=YQ%20GLASSES%20Wholesale%20Inquiry';
 const inquiryHref = site.inquiryUrl;
 const inquiryFor = (product: string) => inquiryHref + '?product=' + encodeURIComponent(product);
@@ -70,52 +72,32 @@ const faqs = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f5f0ea" />
     <meta name="description" content={site.description} />
-    <meta name="robots" content="noindex" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content="YQ GLASSES | Wholesale Glassware & Cake Serving Sets" />
     <meta property="og:description" content={site.description} />
-    <meta property="og:image" content="https://yqglasses.com/images/reference/hero-glassware.webp" />
+    <BrandAssets />
     <meta property="og:url" content="https://yqglasses.com/" />
     <link rel="canonical" href="https://yqglasses.com/" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: site.brand, url: 'https://' + site.domain + '/', description: site.description })} />
     <title>YQ GLASSES | Wholesale Glassware & Cake Serving Sets</title>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="site-header" id="top">
-      <div class="header-inner page-width">
-        <a class="brand" href="#top" aria-label="YQ GLASSES home"><span class="brand-mark">YQ<span>.</span></span><span class="brand-word">GLASSES</span></a>
-        <nav class="desktop-nav" aria-label="Main navigation">
-          <a href="#collections">Collections</a>
-          <a href="#customization">Customization</a>
-          <a href="#quality">Quality</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-        <a class="header-cta" href={inquiryHref}>Request a quote <span aria-hidden="true">↗</span></a>
-        <button class="menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
-      </div>
-      <nav class="mobile-nav" id="mobile-menu" aria-label="Mobile navigation" hidden>
-        <a href="#collections">Collections</a><a href="#customization">Customization</a><a href="#quality">Quality</a><a href="#faq">FAQ</a><a href={inquiryHref}>Request a quote</a>
-      </nav>
-    </header>
+    <SiteHeader />
 
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-image" aria-hidden="true"></div>
         <div class="hero-inner page-width">
           <div class="hero-copy">
-            <p class="eyebrow light"><span class="eyebrow-rule"></span> WHOLESALE · OEM · ODM</p>
             <h1 id="hero-title">Glassware for celebrations.<br /><em>Made for your brand.</em></h1>
             <p class="hero-lead">Custom champagne flutes, cake-serving sets and decorative glassware for wholesale collections, gifting and hospitality.</p>
             <div class="hero-actions">
-              <a class="button button-copper" href={inquiryHref}>Request a wholesale quote <span aria-hidden="true">↗</span></a>
-              <a class="hero-text-link" href="#collections">Explore the collection <span aria-hidden="true">↓</span></a>
+              <a class="button button-copper" href="#contact">Discuss your project <span aria-hidden="true">↓</span></a>
             </div>
           </div>
-          <div class="hero-index" aria-hidden="true"><span>YQ GLASSES</span><span>01 / 04</span></div>
         </div>
       </section>
 
@@ -131,14 +113,11 @@ const faqs = [
         <div class="page-width feature-grid">
           <div class="feature-image frame-offset">
             <img src="/images/reference/champagne-flutes.webp" alt="Champagne flutes with crystal-filled decorative stems" width="600" height="600" loading="lazy" />
-            <span class="image-label">01 / CHAMPAGNE FLUTES</span>
           </div>
           <div class="feature-copy">
-            <p class="eyebrow"><span class="eyebrow-rule"></span> OUR MAIN COLLECTION</p>
             <h2 id="flutes-title">Champagne flutes<br /><em>with a signature finish.</em></h2>
-            <p>Choose from flute, tulip, coupe and stemless styles. Explore glass and plastic options, then add crystal details, custom branding or packaging to suit your collection.</p>
+            <p>Explore <a href="/personalized-champagne-glasses/">personalized champagne glasses</a> in flute, tulip, coupe and stemless silhouettes, then discuss decoration, branding and packaging for your collection. Availability is confirmed for each design.</p>
             <div class="feature-list"><span>Machine-made & hand-blown</span><span>Glass & plastic options</span><span>Crystal & rhinestone details</span><span>Logo & packaging</span></div>
-            <a class="text-action" href={inquiryFor('Champagne Flutes')}>Ask about champagne flutes <span aria-hidden="true">↗</span></a>
           </div>
         </div>
       </section>
@@ -146,15 +125,12 @@ const faqs = [
       <section class="feature-section serving" aria-labelledby="serving-title">
         <div class="page-width feature-grid reverse">
           <div class="feature-copy">
-            <p class="eyebrow"><span class="eyebrow-rule"></span> CAKE SERVING SETS</p>
             <h2 id="serving-title">The finishing touch<br /><em>for every occasion.</em></h2>
-            <p>Bring cake knives and servers into a coordinated collection. Select handle finishes and decorative details that sit naturally beside your glassware.</p>
+            <p>Bring <a href="/cake-knife-server-sets/">cake knife and server sets</a> into a coordinated collection. Select handle finishes and decorative details that sit naturally beside your glassware.</p>
             <div class="feature-list"><span>Stainless steel blades</span><span>Crystal-accented handles</span><span>Matching colors & finishes</span><span>Gift-ready presentation</span></div>
-            <a class="text-action" href={inquiryFor('Cake Knife & Server Sets')}>Ask about serving sets <span aria-hidden="true">↗</span></a>
           </div>
           <div class="feature-image frame-offset">
             <img src="/images/reference/cake-serving-set.webp" alt="Gold-handled crystal cake knife and server set" width="700" height="700" loading="lazy" />
-            <span class="image-label">02 / CAKE SERVING SETS</span>
           </div>
         </div>
       </section>
@@ -162,9 +138,7 @@ const faqs = [
       <section class="glassware-section" aria-labelledby="glassware-title">
         <div class="page-width">
           <div class="section-heading centered">
-            <p class="eyebrow"><span class="eyebrow-rule"></span> MORE GLASSWARE</p>
             <h2 id="glassware-title">A collection for<br /><em>every kind of pour.</em></h2>
-            <p>Build a cohesive range for hospitality, retail or private-label gifting.</p>
           </div>
           <div class="glassware-grid">
             {glassware.map((item) => (
@@ -180,9 +154,7 @@ const faqs = [
       <section class="finishes-section" id="customization" aria-labelledby="finishes-title">
         <div class="page-width">
           <div class="section-heading centered on-dark">
-            <p class="eyebrow light"><span class="eyebrow-rule"></span> HANDCRAFTED DETAILS</p>
             <h2 id="finishes-title">A little detail.<br /><em>A lasting impression.</em></h2>
-            <p>From subtle sparkle to coordinated finishes, make each piece distinctly yours.</p>
           </div>
           <div class="finish-grid">
             {finishes.map((item) => (
@@ -195,9 +167,7 @@ const faqs = [
       <section class="services-section" aria-labelledby="services-title">
         <div class="page-width">
           <div class="section-heading centered">
-            <p class="eyebrow"><span class="eyebrow-rule"></span> MADE TO YOUR COLLECTION</p>
             <h2 id="services-title">From your brief<br /><em>to a finished set.</em></h2>
-            <p>Flexible customization for existing styles and new wholesale projects.</p>
           </div>
           <div class="service-grid">
             {services.map((item) => (
@@ -210,9 +180,7 @@ const faqs = [
       <section class="quality-section" id="quality" aria-labelledby="quality-title">
         <div class="page-width">
           <div class="section-heading centered">
-            <p class="eyebrow"><span class="eyebrow-rule"></span> QUALITY & CARE</p>
             <h2 id="quality-title">Considered from glass<br /><em>to gift box.</em></h2>
-            <p>Each project is reviewed for presentation, assembly and protective packaging.</p>
           </div>
           <div class="quality-grid">
             {quality.map((item, index) => (
@@ -225,9 +193,7 @@ const faqs = [
       <section class="faq-section" id="faq" aria-labelledby="faq-title">
         <div class="page-width faq-layout">
           <div class="faq-intro">
-            <p class="eyebrow"><span class="eyebrow-rule"></span> BUYER QUESTIONS</p>
             <h2 id="faq-title">Good questions.<br /><em>Clear answers.</em></h2>
-            <p>Every wholesale project is different. Here are a few helpful starting points.</p>
           </div>
           <div class="faq-list">
             {faqs.map((item) => (
@@ -240,48 +206,23 @@ const faqs = [
       <section class="contact-section" id="contact" aria-labelledby="contact-title">
         <div class="page-width contact-layout">
           <div class="contact-copy">
-            <p class="eyebrow light"><span class="eyebrow-rule"></span> START YOUR PROJECT</p>
             <h2 id="contact-title">Tell us what<br /><em>you have in mind.</em></h2>
-            <p>Share a product, quantity and any design details. We will help you find a practical starting point for your wholesale or custom project.</p>
             <a href={contactHref} class="contact-email">zcolin867@gmail.com <span aria-hidden="true">↗</span></a>
           </div>
           <div class="contact-card">
-            <p class="contact-card-label">A clearer brief gets a faster, more useful review.</p>
             <ol class="contact-steps">
               <li><span>01</span><div><strong>Choose a product</strong><small>Tell us what you want to source or develop.</small></div></li>
               <li><span>02</span><div><strong>Add your requirements</strong><small>Share quantity, finish, packaging and timing.</small></div></li>
               <li><span>03</span><div><strong>Upload references</strong><small>Attach sketches, photos, artwork or drawings.</small></div></li>
             </ol>
             <a class="button button-copper" href={inquiryHref}>Start your inquiry <span aria-hidden="true">↗</span></a>
-            <p class="form-note">Your project details are submitted directly to YQ GLASSES.</p>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="page-width footer-main">
-        <div><a class="brand footer-brand" href="#top" aria-label="YQ GLASSES home"><span class="brand-mark">YQ<span>.</span></span><span class="brand-word">GLASSES</span></a><p>Wholesale glassware and serving sets, thoughtfully made for your collection.</p></div>
-        <div class="footer-links"><a href="#collections">Collections</a><a href="#customization">Customization</a><a href="#quality">Quality</a><a href={inquiryHref}>Request a quote</a></div>
-      </div>
-      <div class="page-width footer-bottom"><span>© {year} YQ GLASSES</span><span>yqglasses.com</span><a href="#top">Back to top ↑</a></div>
-    </footer>
+    <SiteFooter />
 
-    <script>
-      const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
-      const mobileMenu = document.querySelector<HTMLElement>('#mobile-menu');
-      if (menuButton && mobileMenu) {
-        const closeMenu = () => { menuButton.setAttribute('aria-expanded', 'false'); menuButton.setAttribute('aria-label', 'Open menu'); mobileMenu.hidden = true; };
-        menuButton.addEventListener('click', () => {
-          const open = menuButton.getAttribute('aria-expanded') === 'true';
-          menuButton.setAttribute('aria-expanded', String(!open));
-          menuButton.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
-          mobileMenu.hidden = open;
-        });
-        mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
-        window.addEventListener('resize', () => { if (window.innerWidth > 860) closeMenu(); });
-      }
 
-    </script>
   </body>
 </html>

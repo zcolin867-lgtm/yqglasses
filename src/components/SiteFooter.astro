@@ -1,0 +1,38 @@
+---
+import Brand from './Brand.astro';
+import { site } from '../data/site';
+---
+
+<footer class="site-footer" id="footer">
+  <div class="page-width footer-main">
+    <div class="footer-brand-block">
+      <Brand href="/" footer markOnly />
+      <p class="footer-tagline">Glassware &amp; tableware for moments worth raising a glass to.</p>
+    </div>
+    <nav class="footer-navigation" aria-label="Footer navigation">
+      <h3>Explore</h3>
+      <div class="footer-links">
+        <a href="/personalized-champagne-glasses/">Champagne Glasses</a>
+        <a href="/cake-knife-server-sets/">Cake Knife &amp; Server Sets</a>
+        <a href="/custom-shot-glasses/">Shot Glasses</a>
+        <a href="/blog/">Blog</a>
+      </div>
+    </nav>
+    <div class="footer-contact">
+      <h3>Get in touch</h3>
+      <div class="footer-contact-list">
+        <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer">
+          <span>WhatsApp</span><strong>{site.whatsappNumber}</strong>
+        </a>
+        <a href={`mailto:${site.contactEmail}`}>
+          <span>Email</span><strong>{site.contactEmail}</strong>
+        </a>
+        <div><span>Location</span><strong>{site.location}</strong></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-width footer-bottom">
+    <span>since 2010 YQ glasses</span>
+    <a href="#top">Back to top ↑</a>
+  </div>
+</footer>

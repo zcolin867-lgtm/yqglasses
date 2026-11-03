@@ -1,11 +1,14 @@
 ---
 import '../../styles/global.css';
 import { site } from '../../data/site';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import BrandAssets from '../../components/BrandAssets.astro';
 
-const year = new Date().getFullYear();
 const contactHref = 'mailto:' + site.contactEmail + '?subject=YQ%20GLASSES%20Wholesale%20Inquiry';
 
 const products = [
+  'Champagne Glasses',
   'Champagne Flutes',
   'Cake Knife & Server Sets',
   'Beer Glasses',
@@ -24,36 +27,19 @@ const products = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f8f3e9" />
     <meta name="description" content="Share your glassware or serving-set requirements and upload reference files for a custom quotation from YQ GLASSES." />
-    <meta name="robots" content="noindex, nofollow" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content="Request a Quote | YQ GLASSES" />
     <meta property="og:description" content="Send product details, target quantity and reference files for a practical project review." />
-    <meta property="og:image" content="https://yqglasses.com/images/reference/file-upload-banner.webp" />
+    <BrandAssets />
     <meta property="og:url" content="https://yqglasses.com/file-upload/" />
     <link rel="canonical" href="https://yqglasses.com/file-upload/" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Request a Quote | YQ GLASSES</title>
   </head>
   <body class="inquiry-page">
     <a class="skip-link" href="#main">Skip to inquiry form</a>
 
-    <header class="site-header" id="top">
-      <div class="header-inner page-width">
-        <a class="brand" href="/" aria-label="YQ GLASSES home"><span class="brand-mark">YQ<span>.</span></span><span class="brand-word">GLASSES</span></a>
-        <nav class="desktop-nav" aria-label="Main navigation">
-          <a href="/#collections">Collections</a>
-          <a href="/#customization">Customization</a>
-          <a href="/#quality">Quality</a>
-          <a href="/#faq">FAQ</a>
-        </nav>
-        <a class="header-cta is-current" href="#project-form">Start your inquiry <span aria-hidden="true">↓</span></a>
-        <button class="menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
-      </div>
-      <nav class="mobile-nav" id="mobile-menu" aria-label="Mobile navigation" hidden>
-        <a href="/#collections">Collections</a><a href="/#customization">Customization</a><a href="/#quality">Quality</a><a href="/#faq">FAQ</a><a href="#project-form">Start your inquiry</a>
-      </nav>
-    </header>
+    <SiteHeader inquiryPage />
 
     <main id="main">
       <section class="upload-hero" aria-labelledby="upload-hero-title">
@@ -129,6 +115,18 @@ const products = [
                     <input type="text" name="quantity" inputmode="numeric" maxlength="40" placeholder="e.g. 500 sets" />
                   </label>
                 </div>
+                <div class="form-row" id="order-context" hidden>
+                  <label>Order type
+                    <select name="order_type" id="order-type">
+                      <option value="">Select an order type</option>
+                      <option value="stock">Ready to ship</option>
+                      <option value="custom">Custom order</option>
+                    </select>
+                  </label>
+                  <label>Design reference
+                    <input type="text" name="design" id="design-reference" maxlength="120" placeholder="Preferred design" />
+                  </label>
+                </div>
                 <label>Project details <span aria-hidden="true">*</span>
                   <textarea name="message" rows="6" minlength="20" maxlength="3000" placeholder="Describe the product, size or capacity, finish, logo, packaging and timing." required></textarea>
                 </label>
@@ -175,33 +173,23 @@ const products = [
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="page-width footer-main">
-        <div><a class="brand footer-brand" href="/" aria-label="YQ GLASSES home"><span class="brand-mark">YQ<span>.</span></span><span class="brand-word">GLASSES</span></a><p>Wholesale glassware and serving sets, thoughtfully made for your collection.</p></div>
-        <div class="footer-links"><a href="/#collections">Collections</a><a href="/#customization">Customization</a><a href="/#quality">Quality</a><a href="#project-form">Inquiry form</a></div>
-      </div>
-      <div class="page-width footer-bottom"><span>© {year} YQ GLASSES</span><span>yqglasses.com</span><a href="#top">Back to top ↑</a></div>
-    </footer>
+    <SiteFooter />
 
     <script>
-      const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
-      const mobileMenu = document.querySelector<HTMLElement>('#mobile-menu');
-      if (menuButton && mobileMenu) {
-        const closeMenu = () => { menuButton.setAttribute('aria-expanded', 'false'); menuButton.setAttribute('aria-label', 'Open menu'); mobileMenu.hidden = true; };
-        menuButton.addEventListener('click', () => {
-          const open = menuButton.getAttribute('aria-expanded') === 'true';
-          menuButton.setAttribute('aria-expanded', String(!open));
-          menuButton.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
-          mobileMenu.hidden = open;
-        });
-        mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
-        window.addEventListener('resize', () => { if (window.innerWidth > 860) closeMenu(); });
-      }
-
       const params = new URLSearchParams(window.location.search);
       const product = params.get('product');
       const select = document.querySelector<HTMLSelectElement>('#product-interest');
       if (product && select && Array.from(select.options).some((option) => option.value === product)) select.value = product;
+
+      const orderType = params.get('order_type');
+      const orderContext = document.querySelector<HTMLElement>('#order-context');
+      const orderSelect = document.querySelector<HTMLSelectElement>('#order-type');
+      const designReference = document.querySelector<HTMLInputElement>('#design-reference');
+      if ((orderType === 'stock' || orderType === 'custom') && orderContext && orderSelect) {
+        orderContext.hidden = false;
+        orderSelect.value = orderType;
+        if (designReference) designReference.value = (params.get('design') || '').slice(0, 120);
+      }
 
       const success = document.querySelector<HTMLElement>('#form-success');
       const error = document.querySelector<HTMLElement>('#form-error');

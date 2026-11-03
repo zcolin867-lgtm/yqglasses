@@ -1,0 +1,56 @@
+---
+import Brand from './Brand.astro';
+import { site } from '../data/site';
+
+interface Props {
+  inquiryPage?: boolean;
+}
+
+const { inquiryPage = false } = Astro.props;
+const quoteHref = inquiryPage ? '#project-form' : site.inquiryUrl;
+const quoteLabel = inquiryPage ? 'Start your inquiry' : 'Request a quote';
+const cakePage = Astro.url.pathname.startsWith('/cake-knife-server-sets/');
+const champagnePage = Astro.url.pathname.startsWith('/personalized-champagne-glasses/');
+const shotGlassPage = Astro.url.pathname.startsWith('/custom-shot-glasses/');
+const trumpetFlutePage = Astro.url.pathname.startsWith('/trumpet-flute-champagne-glasses/');
+const blogPage = Astro.url.pathname.startsWith('/blog/');
+const aboutPage = Astro.url.pathname.startsWith('/about/');
+---
+
+<header class="site-header" id="top">
+  <div class="header-inner page-width">
+    <Brand href="/" markOnly />
+    <nav class="primary-nav" id="mobile-menu" aria-label="Main navigation">
+      <a href="/personalized-champagne-glasses/" aria-current={champagnePage ? 'page' : undefined}>Champagne Glasses</a>
+      <a href="/cake-knife-server-sets/" aria-current={cakePage ? 'page' : undefined}>Cake Knife and Server Set</a>
+      <details class="nav-dropdown">
+        <summary>Other Products <span aria-hidden="true">⌄</span></summary>
+        <div class="nav-submenu">
+          <a href="/custom-shot-glasses/" aria-current={shotGlassPage ? 'page' : undefined}>Shot Glasses</a>
+          <a href="/trumpet-flute-champagne-glasses/" aria-current={trumpetFlutePage ? 'page' : undefined}>Trumpet Flute Champagne Glasses</a>
+        </div>
+      </details>
+      <a href="/blog/" aria-current={blogPage ? 'page' : undefined}>Blog</a>
+      <a class="mobile-quote" href={quoteHref}>{quoteLabel}</a>
+    </nav>
+    <a class="header-about" href="/about/" aria-current={aboutPage ? 'page' : undefined}>About Us</a>
+    <a class:list={['header-cta', { 'is-current': inquiryPage }]} href={quoteHref}>{quoteLabel} <span aria-hidden="true">{inquiryPage ? '↓' : '↗'}</span></a>
+    <button class="menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<script>
+  const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const mainNav = document.querySelector<HTMLElement>('#mobile-menu');
+  if (menuButton && mainNav) {
+    const closeMenu = () => { menuButton.setAttribute('aria-expanded', 'false'); menuButton.setAttribute('aria-label', 'Open menu'); mainNav.classList.remove('is-open'); };
+    menuButton.addEventListener('click', () => {
+      const open = menuButton.getAttribute('aria-expanded') === 'true';
+      menuButton.setAttribute('aria-expanded', String(!open));
+      menuButton.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
+      mainNav.classList.toggle('is-open', !open);
+    });
+    mainNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+    window.addEventListener('resize', () => { if (window.innerWidth > 980) closeMenu(); });
+  }
+</script>

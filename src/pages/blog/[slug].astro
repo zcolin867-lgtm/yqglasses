@@ -1,0 +1,188 @@
+---
+import '../../styles/global.css';
+import '../../styles/blog-article.css';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import BrandAssets from '../../components/BrandAssets.astro';
+import { blogCategories, blogPosts } from '../../data/blog';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  for (const post of blogPosts) {
+    if (!post.seo) continue;
+    const { title, description, keywords, primaryKeyword } = post.seo;
+    if (title.length > 58 || description.length > 156 || !title || !description || !keywords ||
+      (title.match(/,/g)?.length || 0) > 2 || (description.match(/,/g)?.length || 0) > 2 ||
+      !title.toLowerCase().includes(primaryKeyword.toLowerCase()) || !description.toLowerCase().includes(primaryKeyword.toLowerCase())) {
+      throw new Error(`Blog TDK does not meet publishing rules: ${post.slug}`);
+    }
+  }
+  return blogPosts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const category = blogCategories.find((item) => item.id === post.category)!;
+const title = post.seo?.title ?? `${post.title} | YQ GLASSES`;
+const description = post.seo?.description ?? post.description;
+const canonical = `https://yqglasses.com/blog/${post.slug}/`;
+const heroImage = post.heroImage ?? post.image;
+const heroAlt = post.heroAlt ?? post.alt;
+const cakeKnifeProductUrl = '/cake-knife-server-sets/';
+const companyPhotos = [
+  { src: '/images/blog/company/assembly-workbench-retouched.webp', alt: 'YQ GLASSES team assembling decorative glassware at a workbench' },
+  { src: '/images/blog/company/glass-processing-retouched.webp', alt: 'Workers handling glass components at workshop stations' },
+  { src: '/images/blog/company/cake-serving-batch.webp', alt: 'Rows of cake knives and servers prepared in protective sleeves during production' },
+  { src: '/images/blog/company/showroom-aisle-retouched.webp', alt: 'Glassware displays in the YQ GLASSES showroom' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    {post.seo && <meta name="keywords" content={post.seo.keywords} />}
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <link rel="canonical" href={canonical} />
+    <BrandAssets shareImage={`https://yqglasses.com${heroImage}`} shareImageType="image/webp" shareImageWidth={post.imageWidth ?? 600} shareImageHeight={post.imageHeight ?? 600} shareImageAlt={heroAlt} />
+    <title>{title}</title>
+  </head>
+  <body class="blog-detail-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader />
+    <main id="main" class="blog-article">
+      <header class="article-hero">
+        <div class="page-width article-hero-grid">
+          <div class="article-hero-copy">
+            <a class="article-back-link" href={`/blog/#${category.id}`}>← Back to blog</a>
+            <p class="article-category">{category.label}</p>
+            <h1>{post.title}</h1>
+            <p class="article-lead">{post.description}</p>
+          </div>
+          <figure class="article-hero-image"><img src={heroImage} alt={heroAlt} width={post.imageWidth ?? 600} height={post.imageHeight ?? 600} fetchpriority="high" /></figure>
+        </div>
+      </header>
+      <div class="page-width article-layout">
+        <aside class="article-sidebar" aria-label="Article navigation and company information">
+          <nav class="article-toc" aria-label="On this page">
+            <h2>On this page</h2>
+            <ol>{post.sections.map((section, index) => <li><a href={`#section-${index + 1}`}>{section.title}</a></li>)}</ol>
+          </nav>
+          <section class="article-company" aria-labelledby="company-photos-title">
+            <div class="article-company-heading"><span>Behind the work</span><h2 id="company-photos-title">Inside YQ GLASSES</h2></div>
+            <div class="article-carousel" aria-roledescription="carousel" aria-label="Four company photographs">
+              <div class="article-carousel-track" data-company-track tabindex="0">
+                {companyPhotos.map((photo, index) => <figure class="article-carousel-slide" id={`company-photo-${index + 1}`}><img src={photo.src} alt={photo.alt} width="450" height="450" loading="lazy" /><figcaption>{String(index + 1).padStart(2, '0')} / 04</figcaption></figure>)}
+              </div>
+              <div class="article-carousel-controls"><button type="button" data-company-prev aria-label="Previous company photo">←</button><span data-company-count aria-live="polite">01 / 04</span><button type="button" data-company-next aria-label="Next company photo">→</button></div>
+            </div>
+            <a class="article-inquiry" href={`${site.inquiryUrl}?source=blog&article=${encodeURIComponent(post.slug)}`}>Request a quote <span aria-hidden="true">↗</span></a>
+          </section>
+        </aside>
+        <article class="article-content" aria-label={post.title}>
+          {post.intro?.map((paragraph, index) => {
+            const phrase = index === 0 ? post.introLinkText : undefined;
+            const position = phrase ? paragraph.indexOf(phrase) : -1;
+            return <p>{position >= 0 && phrase ? <>{paragraph.slice(0, position)}<a href={post.productUrl}>{phrase}</a>{paragraph.slice(position + phrase.length)}</> : paragraph}</p>;
+          })}
+          {post.introImage && <figure class="article-document-image"><img src={post.introImage.src} alt={post.introImage.alt} width={post.introImage.width} height={post.introImage.height} loading="lazy" /></figure>}
+          {post.sections.map((section, index) => <section id={`section-${index + 1}`}><h2>{section.title}</h2>
+            {section.blocks ? section.blocks.map((block) => (
+              block.type === 'paragraph' ? <p>{block.text}</p> :
+              block.type === 'heading' ? <h3>{block.text}</h3> :
+              block.type === 'cta' ? <div class="article-inline-cta"><p>{block.text}</p><a href={block.href}>{block.label} <span aria-hidden="true">↗</span></a></div> :
+              block.type === 'list' ? <ul>{block.items?.map((item) => <li>{item}</li>)}</ul> :
+              block.type === 'image' ? <figure class="article-document-image" style={{ maxWidth: `${block.width}px` }}><img src={block.src} alt={block.alt} width={block.width} height={block.height} loading="lazy" />{block.label && <figcaption>{block.label}</figcaption>}</figure> :
+              block.type === 'table' ? <div class="article-table" role="region" aria-label={block.label ?? 'Cake types and recommended knives'} tabindex="0"><table><thead><tr>{block.headers?.map((cell) => <th scope="col">{cell}</th>)}</tr></thead><tbody>{block.rows?.map((row) => <tr>{row.map((cell) => <td>{cell}</td>)}</tr>)}</tbody></table></div> : null
+            )) : <p>{section.text}</p>}
+          </section>)}
+          <div class="article-next-step">
+            <span>Explore the product</span>
+            <div class="article-next-step-links">
+              <a href={post.productUrl}>{post.productLabel} <span aria-hidden="true">↗</span></a>
+              {post.productUrl !== cakeKnifeProductUrl && <a href={cakeKnifeProductUrl}>Explore cake knife and server sets <span aria-hidden="true">↗</span></a>}
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+    <SiteFooter />
+    <script>
+      const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.article-toc a'));
+      const articleSections = Array.from(document.querySelectorAll<HTMLElement>('.article-content > section[id]'));
+      const tocList = document.querySelector<HTMLOListElement>('.article-toc ol');
+      let activeSection = '';
+      let scrollFrame = 0;
+      const updateCurrentSection = () => {
+        scrollFrame = 0;
+        if (!articleSections.length) return;
+        const readingLine = Math.min(160, window.innerHeight * .25);
+        let current = articleSections[0];
+        for (const section of articleSections) {
+          if (section.getBoundingClientRect().top <= readingLine) current = section;
+          else break;
+        }
+        if (activeSection === current.id) return;
+        activeSection = current.id;
+        articleSections.forEach((section) => section.toggleAttribute('data-current-section', section === current));
+        tocLinks.forEach((link) => {
+          const active = link.hash === `#${current.id}`;
+          if (active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+          if (active && tocList) {
+            const linkRect = link.getBoundingClientRect();
+            const listRect = tocList.getBoundingClientRect();
+            if (linkRect.top < listRect.top) tocList.scrollTop += linkRect.top - listRect.top;
+            else if (linkRect.bottom > listRect.bottom) tocList.scrollTop += linkRect.bottom - listRect.bottom;
+          }
+        });
+      };
+      const queueSectionUpdate = () => {
+        if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateCurrentSection);
+      };
+      tocLinks.forEach((link) => link.addEventListener('click', (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const target = document.getElementById(link.hash.slice(1));
+        if (!target) return;
+        event.preventDefault();
+        window.history.pushState(null, '', link.hash);
+        target.scrollIntoView({ behavior: 'instant', block: 'start' });
+        updateCurrentSection();
+      }));
+      window.addEventListener('scroll', queueSectionUpdate, { passive: true });
+      window.addEventListener('resize', queueSectionUpdate);
+      window.addEventListener('hashchange', queueSectionUpdate);
+      window.addEventListener('load', queueSectionUpdate);
+      const articleBody = document.querySelector('.article-content');
+      if (articleBody) new ResizeObserver(queueSectionUpdate).observe(articleBody);
+      updateCurrentSection();
+
+      const track = document.querySelector<HTMLElement>('[data-company-track]');
+      const slides = Array.from(document.querySelectorAll<HTMLElement>('.article-carousel-slide'));
+      const count = document.querySelector<HTMLElement>('[data-company-count]');
+      const showSlide = (index: number) => {
+        if (!track || !slides.length) return;
+        const next = (index + slides.length) % slides.length;
+        track.scrollTo({ left: slides[next].offsetLeft - slides[0].offsetLeft, behavior: 'smooth' });
+        if (count) count.textContent = `${String(next + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      };
+      document.querySelector<HTMLButtonElement>('[data-company-prev]')?.addEventListener('click', () => {
+        const current = Math.round((track?.scrollLeft || 0) / (track?.clientWidth || 1));
+        showSlide(current - 1);
+      });
+      document.querySelector<HTMLButtonElement>('[data-company-next]')?.addEventListener('click', () => {
+        const current = Math.round((track?.scrollLeft || 0) / (track?.clientWidth || 1));
+        showSlide(current + 1);
+      });
+      track?.addEventListener('scroll', () => {
+        if (!count || !track) return;
+        const current = Math.min(slides.length, Math.max(1, Math.round(track.scrollLeft / (track.clientWidth || 1)) + 1));
+        count.textContent = `${String(current).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      }, { passive: true });
+    </script>
+  </body>
+</html>
